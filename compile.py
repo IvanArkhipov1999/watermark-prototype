@@ -21,7 +21,7 @@ def compile_to_assembler(source_file, assembler_file, compiler, flags):
 	compiling_command = compiling_command + source_file
 	# Setting path for assembler file
 	compiling_command = compiling_command + " -S -o " + assembler_file
-
+	# Executing command
 	os.system(compiling_command)
 
 def compile_to_binary(path_to_file):
