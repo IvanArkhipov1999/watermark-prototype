@@ -1,16 +1,34 @@
-def insert_commands(path_to_file):
-	with open(path_to_file, "r") as f:
+# -----------------------------------------------------------
+# Inserts nop commands to the content of given origin file.
+# Inserts commands before return command. Inserts as many commands,
+# as it is given in parameters. Writes content with nop commands
+# to new file with given name.
+#
+# Parameters:
+#
+# origin_file: path to file with content for inserting nop commands
+# num_of_commands: number of commands to insert
+# inserted_commands_file: path to file to write content with nop commands, all directories in path should exist
+# -----------------------------------------------------------
+def insert_nop_commands(origin_file, num_of_commands, inserted_commands_file):
+	# Reading content of origin file
+	with open(origin_file, "r") as f:
 		contents = f.readlines()
 
+	# Finding return command
 	index = contents.index("\tret\n")
-	contents.insert(index, "\tjmp\t.L2\n");
-	contents.insert(index + 1, "\tnop\n");
-	contents.insert(index + 2, "\tnop\n");
-	contents.insert(index + 3, "\tnop\n");
-	contents.insert(index + 4, "\tnop\n");
-	contents.insert(index + 5, ".L2:\n");
+	# Inserting jump command to label after inserted commands
+	contents.insert(index, "\tjmp\t.FORWATERMARK\n");
+	
+	# Inserting nop commands
+	for i in range(1, num_of_commands + 1):
+		contents.insert(index + i, "\tnop\n");
 
-	with open(path_to_file, "w") as f:
+	# Inserting label after nop commands
+	contents.insert(index + num_of_commands + 1, ".FORWATERMARK:\n");
+
+	# Writing changed content to the file
+	with open(inserted_commands_file, "w") as f:
 		contents = "".join(contents)
 		f.write(contents)
 
