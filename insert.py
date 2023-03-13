@@ -32,26 +32,28 @@ def insert_nop_commands(origin_file, num_of_commands, inserted_commands_file):
 		contents = "".join(contents)
 		f.write(contents)
 
-def insert_watermark(path_to_file):
-	with open(path_to_file, "rb") as f:
+def insert_watermark(noped_file, message, watermark_space_in_bytes, marked_sequence):
+	with open(noped_file, "rb") as f:
 		file_bytes = bytearray(f.read())
 	index = 0
 
 	for byte in file_bytes:
 		if byte == 0x90:
 			is_found = True
-			for i in range(4):
+			for i in range(watermark_space_in_bytes):
 				if file_bytes[index + i] != 0x90:
 					is_found = False
 			if is_found:
 				break
 		index = index + 1
-	print(hex(index))
-		
-	file_bytes[index] = 0x77
-	file_bytes[index + 1] = 0x6f
-	file_bytes[index + 2] = 0x72
-	file_bytes[index + 3] = 0x64
+
+	# TODO: make marked seq not only 2 bytes and size of message not only 1 byte
+	file_bytes[index] = marked_sequence // 256
+	file_bytes[index + 1] = marked_sequence % 256
+	file_bytes[index + 2] = len(message)
+
+	for i in range(len(message)):
+		file_bytes[index + i + 3] = ord(message[i])
 
 	with open("watermarked", "wb") as f:
 		f.write(file_bytes)

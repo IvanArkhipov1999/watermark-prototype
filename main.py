@@ -11,5 +11,5 @@ if __name__== "__main__":
 	path_to_source_file = sys.argv[1]
 	watermark_message = sys.argv[2]
 
-	apply_watermark(path_to_source_file)
+	apply_watermark(path_to_source_file, watermark_message)
 	#extract_watermark()
