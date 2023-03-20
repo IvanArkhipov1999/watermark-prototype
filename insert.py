@@ -52,7 +52,7 @@ def insert_watermark(noped_file, message, watermark_space_in_bytes, marked_seque
 	with open(noped_file, "rb") as f:
 		file_bytes = bytearray(f.read())
 
-	# Search space for watermark by nop commands. Index is a begining of this space.
+	# Searching space for watermark by nop commands. Index is a begining of this space.
 	index = 0
 	for byte in file_bytes:
 		# 0x90 is an opcode of nop command

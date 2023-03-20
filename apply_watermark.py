@@ -9,12 +9,9 @@ from insert import *
 # source_file: path to source file in which binary message should be watermarked
 # watermark_message: message to be inserted
 # compiler: path to compiler
+# marked_sequence: sequence for marking
 # -----------------------------------------------------------
-def apply_watermark(source_file, watermark_message, compiler):
-	# For marked sequence is chosen 1111001101. Suffix 011110 is random values.
-	# It is needed so that the length of the sequence is a multiple of 16.
-	# It should store full number of bytes.
-	marked_sequence = int('0b1111001101011110', 2)
+def apply_watermark(source_file, watermark_message, compiler, marked_sequence):
 	# Number of bytes to store sequence for marking.
 	marked_sequence_space_in_bytes = (marked_sequence.bit_length() + 7) // 8
 	# Number of bytes to store size of message.
