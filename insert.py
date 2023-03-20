@@ -32,14 +32,33 @@ def insert_nop_commands(origin_file, num_of_commands, inserted_commands_file):
 		contents = "".join(contents)
 		f.write(contents)
 
-def insert_watermark(noped_file, message, watermark_space_in_bytes, marked_sequence):
+# -----------------------------------------------------------
+# Inserts watermark information to the given file with allocated memory for it.
+# Allocated memory contains nop commands. Inserts in this space given sequence
+# for marking, size of watermark text and watermark text. Marked sequence takes
+# 2 bytes, size of watermark text takes 1 byte (size of text is less than 256 symbols).
+# Watermarked file is located in given path.
+#
+# Parameters:
+#
+# noped_file: path to file with inserted nop commands
+# message: text of message
+# watermark_space_in_bytes: number of bytes for watermark information
+# marked_sequence: sequence for marking
+# watermarked_file: path to watermarked file
+# -----------------------------------------------------------
+def insert_watermark(noped_file, message, watermark_space_in_bytes, marked_sequence, watermarked_file):
+	# Reading content of file with nop commands
 	with open(noped_file, "rb") as f:
 		file_bytes = bytearray(f.read())
-	index = 0
 
+	# Search space for watermark by nop commands. Index is a begining of this space.
+	index = 0
 	for byte in file_bytes:
+		# 0x90 is an opcode of nop command
 		if byte == 0x90:
 			is_found = True
+			# Checking number of nop commands
 			for i in range(watermark_space_in_bytes):
 				if file_bytes[index + i] != 0x90:
 					is_found = False
@@ -47,14 +66,18 @@ def insert_watermark(noped_file, message, watermark_space_in_bytes, marked_seque
 				break
 		index = index + 1
 
-	# TODO: make marked seq not only 2 bytes and size of message not only 1 byte
+	# Putting watermark information: marked sequence, size of message and text of message
+	# Marked sequence takes 2 bytes
 	file_bytes[index] = marked_sequence // 256
 	file_bytes[index + 1] = marked_sequence % 256
+	# Length of message is less than 256 symbols
 	file_bytes[index + 2] = len(message)
 
+	# Writing text of message
 	for i in range(len(message)):
 		file_bytes[index + i + 3] = ord(message[i])
 
-	with open("watermarked", "wb") as f:
+	# Writing changed content to the file
+	with open(watermarked_file, "wb") as f:
 		f.write(file_bytes)
 
