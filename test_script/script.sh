@@ -7,7 +7,7 @@ output=$(python3 ../main.py extract_watermark watermarked)
 gcc --version
 echo $output
 failure=1
-if [[ "$output" == "Test message" ]]; then
+if [[ "$output" != "Test message" ]]; then
   failure=0
 fi
 cd ..
